@@ -6,38 +6,77 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        try
+        while (true)
         {
-            // Example key matrix for a 4x4 Hill Cipher
-            int[,] keyMatrix = {
-            { 20, 2, 1, 21 },
-            { 16, 11, 25, 20 },
-            { 14, 18, 7, 12 },
-            { 25, 22, 23, 4 }
-        };
+            try
+            {
+                Console.WriteLine("Hill Cipher Encryption/Decryption");
+                Console.WriteLine("1. Eingabe des zu verschlüsselnden Textes");
+                Console.WriteLine("2. Eingabe der Schlüsselmatrix");
+                Console.WriteLine("3. Beenden");
+                Console.Write("Bitte wählen Sie eine Option: ");
+                string option = Console.ReadLine();
 
-            // Create an instance of HillCipher with a 4x4 matrix
-            HillCipher cipher = new HillCipher(4, keyMatrix);
+                if (option == "3")
+                {
+                    Console.WriteLine("Programm beendet.");
+                    break;
+                }
 
-            // Example plaintext
-            string plaintext = "TREFFE KONTAKTPERSON UM DREI UHR IM STADTPARK";
+                if (option == "1" || option == "2")
+                {
+                    // Eingabe des zu verschlüsselnden Textes
+                    Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                    string plaintext = Console.ReadLine();
 
-            // Encrypt the plaintext
-            string encryptedText = cipher.Encrypt(plaintext);
-            Console.WriteLine($"Plaintext: {plaintext}");
-            Console.WriteLine($"Encrypted Text: {encryptedText}");
+                    // Eingabe der Schlüsselmatrix
+                    Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
+                    int matrixSize = int.Parse(Console.ReadLine());
 
-            // Decrypt the ciphertext
-            string decryptedText = cipher.Decrypt(encryptedText);
-            Console.WriteLine($"Decrypted Text: {decryptedText}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"An error occurred: {ex.Message}");
+                    int[,] keyMatrix = new int[matrixSize, matrixSize];
+                    Console.WriteLine($"Geben Sie die {matrixSize}x{matrixSize}-Schlüsselmatrix ein (Zeile für Zeile, Werte durch Leerzeichen getrennt):");
+                    for (int i = 0; i < matrixSize; i++)
+                    {
+                        Console.Write($"Zeile {i + 1}: ");
+                        string[] row = Console.ReadLine().Split(' ');
+                        for (int j = 0; j < matrixSize; j++)
+                        {
+                            keyMatrix[i, j] = int.Parse(row[j]);
+                        }
+                    }
+
+                    // Instanz des HillCipher erstellen
+                    HillCipher cipher = new HillCipher(matrixSize, keyMatrix);
+
+                    // Verschlüsselung
+                    string encryptedText = cipher.Encrypt(plaintext);
+                    Console.WriteLine($"Verschlüsselter Text: {encryptedText}");
+
+                    // Entschlüsselung
+                    string decryptedText = cipher.Decrypt(encryptedText);
+                    Console.WriteLine($"Entschlüsselter Text: {decryptedText}");
+                }
+                else
+                {
+                    Console.WriteLine("Ungültige Option. Bitte versuchen Sie es erneut.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ein Fehler ist aufgetreten: {ex.Message}");
+            }
+
+            Console.WriteLine("\nMöchten Sie einen weiteren Vorgang durchführen? (j/n): ");
+            string repeat = Console.ReadLine();
+            if (repeat.ToLower() != "j")
+            {
+                Console.WriteLine("Programm beendet.");
+                break;
+            }
         }
     }
-
 }
+
 
 public class HillCipher
 {
