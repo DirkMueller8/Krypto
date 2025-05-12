@@ -15,7 +15,7 @@ public class Program
                 Console.WriteLine("2. Generiere eine zufällige Schlüsselmatrix");
                 Console.WriteLine("3. Beenden");
                 Console.Write("Bitte wählen Sie eine Option: ");
-                string option = Console.ReadLine();
+                string option = Console.ReadLine() ?? string.Empty;
 
                 if (option == "3")
                 {
@@ -33,18 +33,21 @@ public class Program
                     {
                         // Eingabe des zu verschlüsselnden Textes
                         Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
-                        plaintext = Console.ReadLine();
+                        plaintext = Console.ReadLine() ?? string.Empty;
 
                         // Eingabe der Schlüsselmatrix
                         Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
-                        matrixSize = int.Parse(Console.ReadLine());
+                        if (!int.TryParse(Console.ReadLine(), out matrixSize))
+                        {
+                            matrixSize = 3; // Standardwert
+                        }
 
                         keyMatrix = new int[matrixSize, matrixSize];
                         Console.WriteLine($"Geben Sie die {matrixSize}x{matrixSize}-Schlüsselmatrix ein (Zeile für Zeile, Werte durch Leerzeichen getrennt):");
                         for (int i = 0; i < matrixSize; i++)
                         {
                             Console.Write($"Zeile {i + 1}: ");
-                            string[] row = Console.ReadLine().Split(' ');
+                            string[] row = (Console.ReadLine() ?? string.Empty).Split(' ');
                             for (int j = 0; j < matrixSize; j++)
                             {
                                 keyMatrix[i, j] = int.Parse(row[j]);
@@ -55,7 +58,10 @@ public class Program
                     {
                         // Generiere eine zufällige Schlüsselmatrix
                         Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
-                        matrixSize = int.Parse(Console.ReadLine());
+                        if (!int.TryParse(Console.ReadLine(), out matrixSize))
+                        {
+                            matrixSize = 3; // Standardwert
+                        }
 
                         HillCipher tempCipher = new HillCipher(matrixSize);
                         keyMatrix = tempCipher.GetKeyMatrix();
@@ -72,7 +78,7 @@ public class Program
 
                         // Eingabe des zu verschlüsselnden Textes
                         Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
-                        plaintext = Console.ReadLine();
+                        plaintext = Console.ReadLine() ?? string.Empty;
                     }
 
                     // Instanz des HillCipher erstellen
@@ -97,12 +103,16 @@ public class Program
             }
 
             Console.WriteLine("\nMöchten Sie einen weiteren Vorgang durchführen? (j/n): ");
-            string repeat = Console.ReadLine();
-            if (repeat.ToLower() != "j")
+            string repeat = Console.ReadLine()?.ToLower() ?? string.Empty;
+            if (repeat != "j")
             {
-                Console.WriteLine("Programm beendet.");
+                if (repeat == "n")
+                {
+                    Console.WriteLine("Programm beendet.");
+                }
                 break;
             }
+
         }
     }
 }
@@ -230,7 +240,7 @@ public class HillCipher
             if (result[i] < 0) result[i] += Mod; // Ensure no negative values
         }
         return result;
-    } 
+    }
 
     private int Determinant(int[,] matrix)
     {
