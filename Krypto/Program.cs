@@ -11,8 +11,8 @@ public class Program
             try
             {
                 Console.WriteLine("Hill Cipher Encryption/Decryption");
-                Console.WriteLine("1. Eingabe des zu verschlüsselnden Textes");
-                Console.WriteLine("2. Eingabe der Schlüsselmatrix");
+                Console.WriteLine("1. Eingabe des zu verschlüsselnden Textes und der Schlüsselmatrix");
+                Console.WriteLine("2. Generiere eine zufällige Schlüsselmatrix");
                 Console.WriteLine("3. Beenden");
                 Console.Write("Bitte wählen Sie eine Option: ");
                 string option = Console.ReadLine();
@@ -25,24 +25,54 @@ public class Program
 
                 if (option == "1" || option == "2")
                 {
-                    // Eingabe des zu verschlüsselnden Textes
-                    Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
-                    string plaintext = Console.ReadLine();
+                    string plaintext = string.Empty;
+                    int[,] keyMatrix;
+                    int matrixSize;
 
-                    // Eingabe der Schlüsselmatrix
-                    Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
-                    int matrixSize = int.Parse(Console.ReadLine());
-
-                    int[,] keyMatrix = new int[matrixSize, matrixSize];
-                    Console.WriteLine($"Geben Sie die {matrixSize}x{matrixSize}-Schlüsselmatrix ein (Zeile für Zeile, Werte durch Leerzeichen getrennt):");
-                    for (int i = 0; i < matrixSize; i++)
+                    if (option == "1")
                     {
-                        Console.Write($"Zeile {i + 1}: ");
-                        string[] row = Console.ReadLine().Split(' ');
-                        for (int j = 0; j < matrixSize; j++)
+                        // Eingabe des zu verschlüsselnden Textes
+                        Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                        plaintext = Console.ReadLine();
+
+                        // Eingabe der Schlüsselmatrix
+                        Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
+                        matrixSize = int.Parse(Console.ReadLine());
+
+                        keyMatrix = new int[matrixSize, matrixSize];
+                        Console.WriteLine($"Geben Sie die {matrixSize}x{matrixSize}-Schlüsselmatrix ein (Zeile für Zeile, Werte durch Leerzeichen getrennt):");
+                        for (int i = 0; i < matrixSize; i++)
                         {
-                            keyMatrix[i, j] = int.Parse(row[j]);
+                            Console.Write($"Zeile {i + 1}: ");
+                            string[] row = Console.ReadLine().Split(' ');
+                            for (int j = 0; j < matrixSize; j++)
+                            {
+                                keyMatrix[i, j] = int.Parse(row[j]);
+                            }
                         }
+                    }
+                    else
+                    {
+                        // Generiere eine zufällige Schlüsselmatrix
+                        Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
+                        matrixSize = int.Parse(Console.ReadLine());
+
+                        HillCipher tempCipher = new HillCipher(matrixSize);
+                        keyMatrix = tempCipher.GetKeyMatrix();
+
+                        Console.WriteLine("Generierte zufällige Schlüsselmatrix:");
+                        for (int i = 0; i < matrixSize; i++)
+                        {
+                            for (int j = 0; j < matrixSize; j++)
+                            {
+                                Console.Write(keyMatrix[i, j] + " ");
+                            }
+                            Console.WriteLine();
+                        }
+
+                        // Eingabe des zu verschlüsselnden Textes
+                        Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                        plaintext = Console.ReadLine();
                     }
 
                     // Instanz des HillCipher erstellen
@@ -128,7 +158,10 @@ public class HillCipher
         }
     }
 
-
+    public int[,] GetKeyMatrix()
+    {
+        return K;
+    }
 
     private int[,] GenerateRandomKey()
     {
