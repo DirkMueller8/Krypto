@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using System.Text;
 
 public class Program
@@ -10,10 +11,11 @@ public class Program
         {
             try
             {
-                Console.WriteLine("Hill Cipher Encryption/Decryption");
-                Console.WriteLine("1. Eingabe des zu verschlüsselnden Textes und der Schlüsselmatrix");
-                Console.WriteLine("2. Generiere eine zufällige Schlüsselmatrix");
+                Console.WriteLine("Verschlüsselungsprogramm");
+                Console.WriteLine("1. Hill-Chiffre: Eingabe des zu verschlüsselnden Textes und der Schlüsselmatrix");
+                Console.WriteLine("2. Hill-Chiffre: Generiere eine zufällige Schlüsselmatrix");
                 Console.WriteLine("3. Beenden");
+                Console.WriteLine("4. Asymmetrische Verschlüsselung mit RSA");
                 Console.Write("Bitte wählen Sie eine Option: ");
                 string option = Console.ReadLine() ?? string.Empty;
 
@@ -92,6 +94,34 @@ public class Program
                     string decryptedText = cipher.Decrypt(encryptedText);
                     Console.WriteLine($"Entschlüsselter Text: {decryptedText}");
                 }
+                else if (option == "4")
+                {
+                    // RSA-Verschlüsselung
+                    Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                    string plaintext = Console.ReadLine() ?? string.Empty;
+
+                    using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(2048))
+                    {
+                        try
+                        {
+                            // Öffentlichen und privaten Schlüssel abrufen
+                            string publicKey = rsa.ToXmlString(false); // Nur öffentlicher Schlüssel
+                            string privateKey = rsa.ToXmlString(true); // Öffentlicher und privater Schlüssel
+
+                            // Verschlüsseln mit dem öffentlichen Schlüssel
+                            string encryptedText = EncryptRSA(plaintext, publicKey);
+                            Console.WriteLine($"Verschlüsselter Text (RSA): {encryptedText}");
+
+                            // Entschlüsseln mit dem privaten Schlüssel
+                            string decryptedText = DecryptRSA(encryptedText, privateKey);
+                            Console.WriteLine($"Entschlüsselter Text (RSA): {decryptedText}");
+                        }
+                        finally
+                        {
+                            rsa.PersistKeyInCsp = false; // Schlüssel nicht im CSP speichern
+                        }
+                    }
+                }
                 else
                 {
                     Console.WriteLine("Ungültige Option. Bitte versuchen Sie es erneut.");
@@ -112,7 +142,28 @@ public class Program
                 }
                 break;
             }
+        }
+    }
 
+    public static string EncryptRSA(string plainText, string publicKey)
+    {
+        using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+        {
+            rsa.FromXmlString(publicKey);
+            byte[] plainBytes = Encoding.UTF8.GetBytes(plainText);
+            byte[] encryptedBytes = rsa.Encrypt(plainBytes, false);
+            return Convert.ToBase64String(encryptedBytes);
+        }
+    }
+
+    public static string DecryptRSA(string encryptedText, string privateKey)
+    {
+        using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
+        {
+            rsa.FromXmlString(privateKey);
+            byte[] encryptedBytes = Convert.FromBase64String(encryptedText);
+            byte[] decryptedBytes = rsa.Decrypt(encryptedBytes, false);
+            return Encoding.UTF8.GetString(decryptedBytes);
         }
     }
 }
