@@ -11,12 +11,12 @@ public class Program
         {
             try
             {
-                Console.WriteLine("Verschlüsselungsprogramm");
-                Console.WriteLine("1. Hill-Chiffre: Eingabe des zu verschlüsselnden Textes und der Schlüsselmatrix");
-                Console.WriteLine("2. Hill-Chiffre: Generiere eine zufällige Schlüsselmatrix");
-                Console.WriteLine("3. Beenden");
-                Console.WriteLine("4. Asymmetrische Verschlüsselung mit RSA");
-                Console.Write("Bitte wählen Sie eine Option: ");
+                Console.WriteLine("Encryption Program");
+                Console.WriteLine("1. Symmetrical Hill-Chiffre: Input of Plaintext and of the key matrix");
+                Console.WriteLine("2. Symmetrical Hill-Chiffre: Generiere eine zufällige Schlüsselmatrix");
+                Console.WriteLine("3. Quit");
+                Console.WriteLine("4. Asymmetrical Encryption with RSA");
+                Console.Write("Please choose and ption: ");
                 string option = Console.ReadLine() ?? string.Empty;
 
                 if (option == "3")
@@ -34,18 +34,18 @@ public class Program
                     if (option == "1")
                     {
                         // Eingabe des zu verschlüsselnden Textes
-                        Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                        Console.Write("Give the plaintext to be encrypted: ");
                         plaintext = Console.ReadLine() ?? string.Empty;
 
                         // Eingabe der Schlüsselmatrix
-                        Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
+                        Console.Write("Give the dimension of the key matrix ein (e.g. 2 for 2x2, 3 for 3x3): ");
                         if (!int.TryParse(Console.ReadLine(), out matrixSize))
                         {
                             matrixSize = 3; // Standardwert
                         }
 
                         keyMatrix = new int[matrixSize, matrixSize];
-                        Console.WriteLine($"Geben Sie die {matrixSize}x{matrixSize}-Schlüsselmatrix ein (Zeile für Zeile, Werte durch Leerzeichen getrennt):");
+                        Console.WriteLine($"Give the elements of the {matrixSize}x{matrixSize} key matrix row by row, where individual values are separated by an empty space:");
                         for (int i = 0; i < matrixSize; i++)
                         {
                             Console.Write($"Zeile {i + 1}: ");
@@ -59,7 +59,7 @@ public class Program
                     else
                     {
                         // Generiere eine zufällige Schlüsselmatrix
-                        Console.Write("Geben Sie die Größe der Schlüsselmatrix ein (z. B. 2 für 2x2, 3 für 3x3): ");
+                        Console.Write("Give the dimension of the key matrix ein (e.g. 2 for 2x2, 3 for 3x3): ");
                         if (!int.TryParse(Console.ReadLine(), out matrixSize))
                         {
                             matrixSize = 3; // Standardwert
@@ -68,7 +68,7 @@ public class Program
                         HillCipher tempCipher = new HillCipher(matrixSize);
                         keyMatrix = tempCipher.GetKeyMatrix();
 
-                        Console.WriteLine("Generierte zufällige Schlüsselmatrix:");
+                        Console.WriteLine("Create random key matrix:");
                         for (int i = 0; i < matrixSize; i++)
                         {
                             for (int j = 0; j < matrixSize; j++)
@@ -79,7 +79,7 @@ public class Program
                         }
 
                         // Eingabe des zu verschlüsselnden Textes
-                        Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                        Console.Write("Give the plaintext to be encrypted: ");
                         plaintext = Console.ReadLine() ?? string.Empty;
                     }
 
@@ -88,16 +88,16 @@ public class Program
 
                     // Verschlüsselung
                     string encryptedText = cipher.Encrypt(plaintext);
-                    Console.WriteLine($"Verschlüsselter Text: {encryptedText}");
+                    Console.WriteLine($"Encrypted text: {encryptedText}");
 
                     // Entschlüsselung
                     string decryptedText = cipher.Decrypt(encryptedText);
-                    Console.WriteLine($"Entschlüsselter Text: {decryptedText}");
+                    Console.WriteLine($"Decrypted text: {decryptedText}");
                 }
                 else if (option == "4")
                 {
                     // RSA-Verschlüsselung
-                    Console.Write("Geben Sie den zu verschlüsselnden Text ein: ");
+                    Console.Write("Give the plaintext to be encrypted: ");
                     string plaintext = Console.ReadLine() ?? string.Empty;
 
                     using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider(2048))
@@ -110,11 +110,11 @@ public class Program
 
                             // Verschlüsseln mit dem öffentlichen Schlüssel
                             string encryptedText = EncryptRSA(plaintext, publicKey);
-                            Console.WriteLine($"Verschlüsselter Text (RSA): {encryptedText}");
+                            Console.WriteLine($"Encrypted text (RSA): {encryptedText}");
 
                             // Entschlüsseln mit dem privaten Schlüssel
                             string decryptedText = DecryptRSA(encryptedText, privateKey);
-                            Console.WriteLine($"Entschlüsselter Text (RSA): {decryptedText}");
+                            Console.WriteLine($"Decrypted text (RSA): {decryptedText}");
                         }
                         finally
                         {
@@ -124,21 +124,21 @@ public class Program
                 }
                 else
                 {
-                    Console.WriteLine("Ungültige Option. Bitte versuchen Sie es erneut.");
+                    Console.WriteLine("Invalid option, please try again.");
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ein Fehler ist aufgetreten: {ex.Message}");
+                Console.WriteLine($"An error has occurred: {ex.Message}");
             }
 
-            Console.WriteLine("\nMöchten Sie einen weiteren Vorgang durchführen? (j/n): ");
+            Console.WriteLine("\nDo you want to repeat? (y/n): ");
             string repeat = Console.ReadLine()?.ToLower() ?? string.Empty;
-            if (repeat != "j")
+            if (repeat != "y")
             {
                 if (repeat == "n")
                 {
-                    Console.WriteLine("Programm beendet.");
+                    Console.WriteLine("Programm terminated.");
                 }
                 break;
             }
@@ -400,29 +400,6 @@ public class HillCipher
         }
         return subMatrix;
     }
-
-    // For a 2×2 matrix [[a, b], [c, d]], the adjugate is [[d, -b], [-c, a]]
-    // For a 2×2 matrix [[a, b], [c, d]], the adjugate is [[d, -b], [-c, a]]
-    //public int[,] AdjugateMatrix2x2(int[,] matrix) // Sichtbarkeit auf public geändert
-    //{
-    //    int[,] adjugate = new int[2, 2];
-    //    adjugate[0, 0] = matrix[1, 1];
-    //    adjugate[0, 1] = -matrix[0, 1];
-    //    adjugate[1, 0] = -matrix[1, 0];
-    //    adjugate[1, 1] = matrix[0, 0];
-
-    //    // Apply modulo to ensure positive values
-    //    for (int i = 0; i < 2; i++)
-    //        for (int j = 0; j < 2; j++)
-    //        {
-    //            adjugate[i, j] = adjugate[i, j] % Mod;
-    //            if (adjugate[i, j] < 0) adjugate[i, j] += Mod;
-    //        }
-
-    //    return adjugate;
-    //}
-
-
 
     private static int GCD(int a, int b) => b == 0 ? a : GCD(b, a % b);
 }
