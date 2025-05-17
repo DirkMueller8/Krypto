@@ -145,6 +145,7 @@ public class Program
         }
     }
 
+    // Encrypts the given plain text using the provided public key
     public static string EncryptRSA(string plainText, string publicKey)
     {
         using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
@@ -156,6 +157,7 @@ public class Program
         }
     }
 
+    // Decrypts the given encrypted text using the provided private key
     public static string DecryptRSA(string encryptedText, string privateKey)
     {
         using (RSACryptoServiceProvider rsa = new RSACryptoServiceProvider())
@@ -219,11 +221,13 @@ public class HillCipher
         }
     }
 
+    // Get the key matrix
     public int[,] GetKeyMatrix()
     {
         return K;
     }
 
+    // Generate a random key matrix of size n x n
     private int[,] GenerateRandomKey()
     {
         var random = new Random();
@@ -241,6 +245,7 @@ public class HillCipher
         return key;
     }
 
+    // Prepare the text by removing spaces and padding with 'X' if necessary
     public string Encrypt(string plaintext)
     {
         plaintext = PrepareText(plaintext);
@@ -257,6 +262,7 @@ public class HillCipher
         return ciphertext.ToString();
     }
 
+    // Convert text to numbers based on the alphabet
     private int[] TextToNumbers(string text)
     {
         var numbers = new int[text.Length];
@@ -265,6 +271,7 @@ public class HillCipher
         return numbers;
     }
 
+    // Convert numbers back to text
     private string NumbersToText(int[] numbers)
     {
         var sb = new StringBuilder();
@@ -273,6 +280,7 @@ public class HillCipher
         return sb.ToString();
     }
 
+    // Multiply a vector by a matrix
     private int[] MatrixMultiply(int[] vector, int[,] matrix)
     {
         int size = matrix.GetLength(0);
@@ -293,6 +301,7 @@ public class HillCipher
         return result;
     }
 
+    // Calculate the determinant of a matrix using recursion
     private int Determinant(int[,] matrix)
     {
         int size = matrix.GetLength(0);
@@ -311,6 +320,7 @@ public class HillCipher
         return det;
     }
 
+    // Calculate the inverse of a matrix using the adjugate method
     private int[,] InverseMatrix(int[,] matrix)
     {
         int det = Determinant(matrix) % Mod;
@@ -332,7 +342,8 @@ public class HillCipher
         return inverse;
     }
 
-    public int[,] AdjugateMatrix(int[,] matrix) // Sichtbarkeit auf public geändert
+    // Calculate the adjugate matrix using cofactors
+    public int[,] AdjugateMatrix(int[,] matrix)
     {
         int size = matrix.GetLength(0);
         if (size != matrix.GetLength(1))
@@ -352,6 +363,7 @@ public class HillCipher
         return adjugate;
     }
 
+    // Calculate the modular inverse of a number using brute force
     private int ModularInverse(int a, int m)
     {
         a = a % m;
@@ -361,6 +373,7 @@ public class HillCipher
         return 1;
     }
 
+    // Prepare the plaintext by removing spaces and padding with 'X' if necessary
     private string PrepareText(string text)
     {
         text = text.ToUpper().Replace(" ", "");
@@ -369,6 +382,7 @@ public class HillCipher
         return text;
     }
 
+    // Decrypt the ciphertext using the inverse key matrix
     public string Decrypt(string ciphertext)
     {
         var plaintext = new StringBuilder();
@@ -384,6 +398,8 @@ public class HillCipher
         // Entfernen des Paddings
         return plaintext.ToString().TrimEnd('X');
     }
+
+    // Create a submatrix by excluding the specified row and column
     private int[,] CreateSubMatrix(int[,] matrix, int excludeRow, int excludeCol)
     {
         int size = matrix.GetLength(0);
@@ -401,5 +417,6 @@ public class HillCipher
         return subMatrix;
     }
 
+    // Greatest Common Divisor
     private static int GCD(int a, int b) => b == 0 ? a : GCD(b, a % b);
 }
